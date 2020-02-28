@@ -1,10 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { getDaysInMonth, addMonths, subMonths, subDays, addDays, isSameDay } from 'date-fns';
-
-interface Day {
-  date: Date;
-  monthOffset: 'previous' | 'current' | 'next';
-}
+import { Component, OnInit, Input } from '@angular/core';
+import { getDaysInMonth, addMonths, subDays, addDays, isSameDay, differenceInCalendarMonths } from 'date-fns';
 
 @Component({
   selector: 'app-datepicker',
@@ -13,12 +8,12 @@ interface Day {
 })
 export class DatepickerComponent implements OnInit {
   headers: string[] = [ 'M', 'T', 'W', 'T', 'F', 'S', 'S' ];
-  daysOfCurrentMonth: Day[] = [];
-  selectedDate = new Date();
+  daysOfCurrentMonth: Date[] = [];
+  @Input() selectedDate = new Date();
 
   get currentMonth(): Date {
     if (this.daysOfCurrentMonth.length) {
-      return this.daysOfCurrentMonth[7].date;
+      return this.daysOfCurrentMonth[7];
     }
   }
 
@@ -26,13 +21,12 @@ export class DatepickerComponent implements OnInit {
     this.daysOfCurrentMonth = this.getDaysOfMonth(this.selectedDate);
   }
 
-  selectDate(date: Day): void {
-    if (date.monthOffset === 'previous') {
-      this.shiftMonth(-1);
-    } else if (date.monthOffset === 'next') {
-      this.shiftMonth(1);
+  selectDate(date: Date): void {
+    const diffInMonths = differenceInCalendarMonths(date, this.currentMonth);
+    if (diffInMonths !== 0) {
+      this.shiftMonth(diffInMonths);
     } else {
-      this.selectedDate = date.date;
+      this.selectedDate = date;
     }
   }
 
@@ -45,31 +39,26 @@ export class DatepickerComponent implements OnInit {
     return isSameDay(d, this.selectedDate);
   }
 
-  private getDaysOfMonth(d: Date): Day[] {
-    const days: Day[] = [];
+  isSelectedMonth(d: Date): boolean {
+    return differenceInCalendarMonths(d, this.currentMonth) === 0;
+  }
+
+  private getDaysOfMonth(d: Date): Date[] {
+    const days: Date[] = [];
 
     for (let i = 1; i <= getDaysInMonth(d); i++) {
-      days.push({
-        date: new Date(d.getFullYear(), d.getMonth(), i),
-        monthOffset: 'current'
-      });
+      days.push(new Date(d.getFullYear(), d.getMonth(), i));
     }
 
-    const firstDayOfMonth = days[0].date;
+    const firstDayOfMonth = days[0];
     for (let i = 1; i <= firstDayOfMonth.getUTCDay(); i++) {
-      days.unshift({
-        date: subDays(firstDayOfMonth, i),
-        monthOffset: 'previous'
-      });
+      days.unshift(subDays(firstDayOfMonth, i));
     }
 
-    const lastDayOfMonth = days[days.length - 1].date;
+    const lastDayOfMonth = days[days.length - 1];
     const daysNextMonth = 7 - days.length % 7;
     for (let i = 1; i <= daysNextMonth; i++) {
-      days.push({
-        date: addDays(lastDayOfMonth, i),
-        monthOffset: 'next'
-      });
+      days.push(addDays(lastDayOfMonth, i));
     }
 
     return days;

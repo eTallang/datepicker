@@ -1,16 +1,20 @@
 <div class="toolbar">
-    <button (click)="shiftMonth(-1)">Prev</button>
-    <h1>{{currentMonth | date:'MMM'}}</h1>
-    <button (click)="shiftMonth(1)">Next</button>
+  <button class="toolbar-button" (click)="shiftMonth(-1)" aria-label="Previous month">
+    <i class="material-icons-outlined" aria-hidden="true">chevron_left</i>
+  </button>
+  <h1>{{ currentMonth | date: 'MMM yyyy' }}</h1>
+  <button class="toolbar-button" (click)="shiftMonth(1)" aria-label="Next month">
+    <i class="material-icons-outlined" aria-hidden="true">chevron_right</i>
+  </button>
 </div>
 <div class="day-container">
   <div class="header" *ngFor="let header of headers">{{ header }}</div>
   <button
     class="day"
     *ngFor="let day of daysOfCurrentMonth"
-    [ngClass]="{ selected: isSelectedDay(day.date), faded: day.monthOffset === 'previous' || day.monthOffset === 'next' }"
+    [ngClass]="{ selected: isSelectedDay(day), faded: !isSelectedMonth(day) }"
     (click)="selectDate(day)"
   >
-    {{ day.date | date: 'dd' }}
+    {{ day | date: 'dd' }}
   </button>
 </div>
