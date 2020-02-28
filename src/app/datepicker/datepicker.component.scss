@@ -1,0 +1,51 @@
+* {
+  font-family: Lato;
+}
+
+:host {
+    display: block;
+}
+
+.toolbar {
+    display: flex;
+    justify-content: space-between;
+}
+
+.day-container {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: repeat(7, 50px);
+  grid-auto-rows: 50px;
+}
+
+.header,
+.day {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  line-height: 0;
+}
+
+.header {
+  background-color: #eee;
+}
+
+.day {
+  border: 1px solid purple;
+  background: transparent;
+  cursor: pointer;
+
+  &:not(.selected):hover {
+    background-color: rgba(128, 0, 128, 0.2);
+  }
+
+  &.selected {
+    background-color: purple;
+    color: white;
+  }
+
+  &.faded {
+    opacity: 0.2;
+  }
+}

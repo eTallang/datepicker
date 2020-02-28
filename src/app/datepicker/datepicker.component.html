@@ -1,0 +1,16 @@
+<div class="toolbar">
+    <button (click)="shiftMonth(-1)">Prev</button>
+    <h1>{{currentMonth | date:'MMM'}}</h1>
+    <button (click)="shiftMonth(1)">Next</button>
+</div>
+<div class="day-container">
+  <div class="header" *ngFor="let header of headers">{{ header }}</div>
+  <button
+    class="day"
+    *ngFor="let day of daysOfCurrentMonth"
+    [ngClass]="{ selected: isSelectedDay(day.date), faded: day.monthOffset === 'previous' || day.monthOffset === 'next' }"
+    (click)="selectDate(day)"
+  >
+    {{ day.date | date: 'dd' }}
+  </button>
+</div>
